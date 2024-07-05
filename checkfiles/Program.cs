@@ -1,4 +1,6 @@
-﻿// Credits to Raymond Chen https://devblogs.microsoft.com/oldnewthing/20190422-00/?p=102433 for the initial program
+﻿// Check OpenEdge source files for inconsistent line endings
+// Credits to Raymond Chen https://devblogs.microsoft.com/oldnewthing/20190422-00/?p=102433 for the initial program
+// This program is currently very rough with hardcoded parameters for my particular needs
 
 using System;
 using System.Collections.Generic;
@@ -6,11 +8,11 @@ using System.IO;
 
 class Program
 {
-    static IEnumerable<FileInfo> EnumerateFiles(string dir, string filepattern)
+    static IEnumerable<FileInfo> EnumerateFiles(string dir)
     {
         var info = new System.IO.DirectoryInfo(dir);
         foreach (var f in info.EnumerateFileSystemInfos(
-                           filepattern, SearchOption.AllDirectories))
+                           "*.*", SearchOption.AllDirectories))
         {
             if (f.Attributes.HasFlag(FileAttributes.Hidden))
             {
@@ -26,7 +28,7 @@ class Program
                         continue;
                 }
 
-                foreach (var inner in EnumerateFiles(f.FullName, filepattern))
+                foreach (var inner in EnumerateFiles(f.FullName))
                 {
                     yield return inner;
                 }
@@ -44,19 +46,20 @@ class Program
 
     static void Main()
     {
-        var Verbose = false;
-        foreach (var f in EnumerateFiles(".", "*.p"))
+        var Verbose = true;
+        foreach (var f in EnumerateFiles("."))
         {
             // Skip obvious binary files.
             switch (f.Extension.ToLower())
             {
-                case ".pdb":
-                case ".exe":
-                case ".dll":
-                case ".png":
-                case ".jpg":
-                case ".gif":
-                case ".wmv":
+                case ".p":
+                case ".i":
+                case ".w":
+                case ".cls":
+                case ".wx":
+                case ".df":
+                    break;
+                default:
                     continue;
             }
 
